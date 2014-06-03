@@ -1,0 +1,26 @@
+---
+layout: default
+---
+<div class="project">
+{{content}}
+
+{% if page.papers %}
+  <h2>Released LaTeX papers</h2>
+
+  <ul>
+{%   for paper in page.papers %}
+    <li> <a href="{{paper.url}}"><strong>{{paper.title}}</strong></a> {{paper.caption}}</li>
+{%   endfor %}
+  </ul>
+{% endif %}
+
+{% if page.releases %}
+  <h2>Released LaTeX styles and fonts</h2>
+
+  <ul>
+{%   for releaseItem in page.releases %}
+    <li> <a href="{{releaseItem.url}}"><strong>{{releaseItem.title}}</strong></a> {{releaseItem.caption}}</li>
+{%   endfor %}
+  </ul>
+{% endif %}
+</div>
