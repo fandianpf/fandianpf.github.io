@@ -14,11 +14,21 @@ layout: default
   </ul>
 {% endif %}
 
-{% if page.releases %}
+{% if page.ctanReleases %}
   <h2>Released LaTeX styles and fonts</h2>
 
   <ul>
-{%   for releaseItem in page.releases %}
+{%   for releaseItem in page.ctanReleases %}
+    <li> <a href="{{releaseItem.url}}"><strong>{{releaseItem.title}}</strong></a> {{releaseItem.caption}}</li>
+{%   endfor %}
+  </ul>
+{% endif %}
+
+{% if page.ivyReleases %}
+  <h2>Released Java, Scala, Groovy projects</h2>
+
+  <ul>
+{%   for releaseItem in page.ivyReleases %}
     <li> <a href="{{releaseItem.url}}"><strong>{{releaseItem.title}}</strong></a> {{releaseItem.caption}}</li>
 {%   endfor %}
   </ul>

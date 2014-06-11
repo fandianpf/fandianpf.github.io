@@ -6,6 +6,8 @@
 require 'pp'
 require 'yaml'
 
+$ivyGroup = 'org.fandianpf'
+
 def loadJekyllPage(jekyllPage)
   puts "Loading: [#{jekyllPage}]"
   contents = File.open(jekyllPage, 'r') do | io |
@@ -42,7 +44,8 @@ end
 def saveJekyllPage(jekyllPage, yaml, contents)
   puts "Saving: [#{jekyllPage}]"
 
-  releases = yaml.delete('releases') if yaml.has_key?('releases')
+  ivyReleases  = yaml.delete('ivyReleases')  if yaml.has_key?('ivyReleases')
+  ctanReleases = yaml.delete('ctanReleases') if yaml.has_key?('ctanReleases')
   papers   = yaml.delete('papers')   if yaml.has_key?('papers')
   projects = yaml.delete('projects') if yaml.has_key?('projects')
 
@@ -56,7 +59,8 @@ def saveJekyllPage(jekyllPage, yaml, contents)
 
       io.puts "#{aKey}: #{yaml[aKey]}"
     end
-    saveList(io, 'releases', releases) unless releases.nil?
+    saveList(io, 'ivyReleases',  ivyReleases)  unless ivyReleases.nil?
+    saveList(io, 'ctanReleases', ctanReleases) unless ctanReleases.nil?
     saveList(io, 'papers',   papers)   unless papers.nil?
     saveList(io, 'projects', projects) unless projects.nil?
     io.puts "---"
@@ -64,33 +68,54 @@ def saveJekyllPage(jekyllPage, yaml, contents)
   end
 end
 
-def gatherPapersInfo(projectDir)
+def gatherPapersInfo(projectName)
+  paperDir = "#{$latexRepo}/#{projectName}"
+  puts "  looking for paper releases in [#{paperDir}]"
   papers = Array.new
-  paperDir = projectDir+'/papers'
   if File.directory?(paperDir) then
     Dir.chdir(paperDir) do
-      Dir.entries('.').sort.each do | aFile |
-        next unless aFile =~ /\.pdf$/
-        paperInfo = Hash.new
-        paperInfo['title'] = File.basename(aFile,'.zip')
-        paperInfo['url']   = "papers/#{aFile}"
-        papers.push(paperInfo)
-      end
+#      Dir.entries('.').sort.each do | aFile |
+#        next unless aFile =~ /\.pdf$/
+#        paperInfo = Hash.new
+#        paperInfo['title'] = File.basename(aFile,'.zip')
+#        paperInfo['url']   = "papers/#{aFile}"
+#        papers.push(paperInfo)
+#      end
     end
   end
   papers
 end
 
-def gatherReleaseInfo(projectDir)
+def gatherCtanReleaseInfo(projectName)
+  ctanRepo = "#{$ctanRepo}/#{projectName}"
+  puts "  looking for ctan releases in [#{ctanRepo}]"
   releases = Array.new
-  ctanRepo = projectDir+'/ctanRepo'
   if File.directory?(ctanRepo) then
     Dir.chdir(ctanRepo) do
+#      Dir.entries('.').sort.each do | aFile |
+#        next unless aFile =~ /\.zip$/
+#        releaseInfo = Hash.new
+#        releaseInfo['title'] = File.basename(aFile,'.zip')
+#        releaseInfo['url']   = "ctanRepo/#{aFile}"
+#        releases.push(releaseInfo)
+#      end
+    end
+  end
+  releases
+end
+
+def gatherIvyReleaseInfo(projectName)
+  ivyRepo = "#{$ivyRepo}/#{projectName}"
+  puts "  looking for ivy releases in [#{ivyRepo}]"
+  releases = Array.new
+  if File.directory?(ivyRepo) then
+    Dir.chdir(ivyRepo) do
       Dir.entries('.').sort.each do | aFile |
-        next unless aFile =~ /\.zip$/
+        next if aFile =~ /^\.+$/
+        puts "    found release: [#{aFile}]"
         releaseInfo = Hash.new
-        releaseInfo['title'] = File.basename(aFile,'.zip')
-        releaseInfo['url']   = "ctanRepo/#{aFile}"
+        releaseInfo['title'] = File.basename(aFile)
+        releaseInfo['url']   = "/ivyRepo/#{$ivyGroup}/#{projectName}/#{aFile}"
         releases.push(releaseInfo)
       end
     end
@@ -98,25 +123,56 @@ def gatherReleaseInfo(projectDir)
   releases
 end
 
+def updateProjectPage(projectPage)
+  puts "Found project page: [#{projectPage}]"
+  projectName = File.basename(projectPage,'.md')
+  projectYaml, projectContents = loadJekyllPage(projectPage)
+  projectYaml = Hash.new unless projectYaml.is_a?(Hash)
+  projectYaml['layout'] = 'projectPage' unless projectYaml.has_key?('layout')
+  if projectYaml['layout'] == 'projectPage' then
+    projectYaml['ivyReleases']  = gatherIvyReleaseInfo(projectName)
+    projectYaml['ctanReleases'] = gatherCtanReleaseInfo(projectName)
+    projectYaml['papers']       = gatherPapersInfo(projectName)
+    saveJekyllPage(projectPage, projectYaml, projectContents)
+  end
+  projectYaml
+end
+
 def gatherProjectInfo
   projects = Array.new
   Dir.entries('.').sort.each do | aFile |
-    next unless File.directory?(aFile)
     next if aFile =~ /^\.+$/
     next if aFile == '.git'
     next if aFile == 'css'
     next if aFile =~ /^_/
+    next if aFile =~ /^ivyRepo$/
+    next if aFile =~ /^ctanRepo$/
+    next if aFile =~ /^latexRepo$/
 
-    jekyllPageName = aFile+'/index.md'
-    projectYaml, projectContents = loadJekyllPage(jekyllPageName)
-    projectYaml['releases'] = gatherReleaseInfo(aFile)
-    projectYaml['papers']   = gatherPapersInfo(aFile)
-    projectYaml['layout']   = 'projectPage'
-    saveJekyllPage(jekyllPageName, projectYaml, projectContents)
+    if File.directory?(aFile) then
+      orgYaml = Hash.new
+      Dir.chdir(aFile) do
+        orgYaml = updateIndexPage('index.md') if File.exists?('index.md')
+      end
+      projectInfo = Hash.new
+      projectInfo['title']   = aFile
+      projectInfo['url']     = aFile+'/index.html'
+      projectInfo['caption'] = orgYaml['caption'] if 
+        orgYaml.has_key?('caption')
+      projects.push(projectInfo)
+      next
+    end
+
+    next unless aFile =~ /\.md$/
+    next if aFile =~ /^index\.md$/
+    next if aFile =~ /^readme\.md$/i
+
+    projectYaml = updateProjectPage(aFile)
 
     projectInfo = Hash.new
-    projectInfo['title']   = aFile
-    projectInfo['url']     = aFile
+    projectName = File.basename(aFile, '.md')
+    projectInfo['title']   = projectName
+    projectInfo['url']     = projectName+'.html'
     projectInfo['caption'] = projectYaml['caption'] if 
       projectYaml.has_key?('caption')
     projects.push(projectInfo)
@@ -124,7 +180,19 @@ def gatherProjectInfo
   projects
 end
 
-orgYaml, orgContents = loadJekyllPage('index.md')
-orgYaml['projects'] = gatherProjectInfo
-orgYaml['layout']   = 'organizationPage'
-saveJekyllPage('index.md', orgYaml, orgContents)
+def updateIndexPage(indexPage)
+  puts "Working on index page: [#{Dir.pwd}/#{indexPage}]"
+  orgYaml, orgContents = loadJekyllPage(indexPage)
+  orgYaml = Hash.new unless orgYaml.is_a?(Hash)
+  orgYaml['projects'] = gatherProjectInfo
+  orgYaml['layout']   = 'organizationPage'
+  saveJekyllPage(indexPage, orgYaml, orgContents)
+  orgYaml
+end
+
+# Collect the absolute paths to the various repositories we will use
+$ivyRepo   = "#{Dir.pwd}/ivyRepo/#{$ivyGroup}"
+$ctanRepo  = "#{Dir.pwd}/ctanRepo"
+$latexRepo = "#{Dir.pwd}/latexRepo"
+
+updateIndexPage('index.md')
