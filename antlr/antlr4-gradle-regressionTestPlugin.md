@@ -10,7 +10,7 @@ ivyReleases:
   url: /ivyRepo/org.fandianpf/antlr4-gradle-regressionTestPlugin/0.1
 ---
 
-# antlr4-gradle-regressionTestPlugin
+# antlr4-gradle-regressionTestPlugin [(GitHub)](https://github.com/fandianpf/antlr4-gradle-regressionTestPlugin)
 
 The antlr4-gradle-regressionTestPlugin provides a 
 [Gradle](http://www.gradle.org/) plugin to run regression tests on 

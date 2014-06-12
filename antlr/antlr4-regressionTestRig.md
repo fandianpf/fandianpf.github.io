@@ -10,7 +10,7 @@ ivyReleases:
   url: /ivyRepo/org.fandianpf/antlr4-regressionTestRig/0.1
 ---
 
-# antlr4-regressionTestRig
+# antlr4-regressionTestRig [(GitHub)](https://github.com/fandianpf/antlr4-regressionTestRig)
 
 The antlr4-regressionTestRig is an [ANTLR](http://www.antlr.org/) tool 
 which is designed for long term regression testing of ANLR4 grammars.
