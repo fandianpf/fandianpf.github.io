@@ -1,0 +1,15 @@
+---
+layout: default
+---
+<div class="home">
+{{content}}
+
+  <h2>Directory list</h2>
+
+  <ul>
+{% for file in page.fileList %}
+    <li> <a href="{{file.url}}"><strong>{{file.title}}</strong></a> {{file.caption}}</li>
+{% endfor %}
+  </ul>
+
+</div>

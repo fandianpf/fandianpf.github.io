@@ -48,6 +48,7 @@ def saveJekyllPage(jekyllPage, yaml, contents)
   ctanReleases = yaml.delete('ctanReleases') if yaml.has_key?('ctanReleases')
   papers   = yaml.delete('papers')   if yaml.has_key?('papers')
   projects = yaml.delete('projects') if yaml.has_key?('projects')
+  fileList = yaml.delete('fileList') if yaml.has_key?('fileList')
 
   File.open(jekyllPage, 'w') do | io |
     io.puts "---"
@@ -63,8 +64,31 @@ def saveJekyllPage(jekyllPage, yaml, contents)
     saveList(io, 'ctanReleases', ctanReleases) unless ctanReleases.nil?
     saveList(io, 'papers',   papers)   unless papers.nil?
     saveList(io, 'projects', projects) unless projects.nil?
+    saveList(io, 'fileList', fileList) unless fileList.nil?
     io.puts "---"
     io.puts contents
+  end
+end
+
+def updateIndexPages(aDir) 
+  puts "Updating index pages in [#{aDir}]"
+  Dir.chdir(aDir) do
+    fileList = Array.new
+    Dir.entries('.').sort.each do | aFile |
+      next if aFile =~ /^\.+$/
+      next if aFile =~ /^index.md$/i
+      puts "Looking at [#{aFile}]"
+      listItem = Hash.new
+      listItem['title'] = aFile
+      listItem['url']   = aFile
+      fileList.push(listItem);
+      updateIndexPages(aFile) if File.directory?(aFile);
+    end
+    indexYaml, indexContents = loadJekyllPage('index.md') if File.exists?('index.md')
+    indexYaml = Hash.new unless indexYaml.is_a?(Hash)
+    indexYaml['layout'] = 'indexPage' unless indexYaml.has_key?('layout')
+    indexYaml['fileList']  = fileList
+    saveJekyllPage('index.md', indexYaml, indexContents)
   end
 end
 
@@ -112,6 +136,7 @@ def gatherIvyReleaseInfo(projectName)
     Dir.chdir(ivyRepo) do
       Dir.entries('.').sort.each do | aFile |
         next if aFile =~ /^\.+$/
+        next if aFile =~ /^index.md$/i
         puts "    found release: [#{aFile}]"
         releaseInfo = Hash.new
         releaseInfo['title'] = File.basename(aFile)
@@ -196,3 +221,5 @@ $ctanRepo  = "#{Dir.pwd}/ctanRepo"
 $latexRepo = "#{Dir.pwd}/latexRepo"
 
 updateIndexPage('index.md')
+
+updateIndexPages('ivyRepo')
