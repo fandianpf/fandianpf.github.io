@@ -8,6 +8,8 @@ title: antlr4-gradle-regressionTestPlugin
 ivyReleases:
 - title: 0.1
   url: /ivyRepo/org.fandianpf/antlr4-gradle-regressionTestPlugin/0.1
+- title: 0.2
+  url: /ivyRepo/org.fandianpf/antlr4-gradle-regressionTestPlugin/0.2
 ---
 
 # antlr4-gradle-regressionTestPlugin [(GitHub)](https://github.com/fandianpf/antlr4-gradle-regressionTestPlugin)
