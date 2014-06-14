@@ -1,4 +1,8 @@
 ---
+caption: |
+  changes -timings to -metrics option to suit antlr4-regressionTestRig 
+  v0.2; unfortunately this version still depends upon 
+  antlr4-regressionTestRig v0.1
 layout: indexPage
 fileList:
 - title: antlr4-gradle-regressionTestPlugin-0.2-releaseNotes.md

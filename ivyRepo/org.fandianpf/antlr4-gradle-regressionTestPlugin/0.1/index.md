@@ -1,4 +1,7 @@
 ---
+caption: |
+  initial release; depends on antlr4-regressionTestRig v0.1 which can not deal
+  with example documents in subdirectories.
 layout: indexPage
 fileList:
 - title: antlr4-gradle-regressionTestPlugin-0.1.jar

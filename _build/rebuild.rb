@@ -70,19 +70,22 @@ def saveJekyllPage(jekyllPage, yaml, contents)
   end
 end
 
-def updateIndexPages(aDir) 
-  puts "Updating index pages in [#{aDir}]"
+def updateRepoIndexPages(aDir) 
+  puts "Updating repo index pages in [#{aDir}]"
+  indexYaml = Hash.new
   Dir.chdir(aDir) do
     fileList = Array.new
     Dir.entries('.').sort.each do | aFile |
       next if aFile =~ /^\.+$/
       next if aFile =~ /^index.md$/i
       puts "Looking at [#{aFile}]"
+      dirYaml = Hash.new
+      dirYaml = updateRepoIndexPages(aFile) if File.directory?(aFile);
       listItem = Hash.new
       listItem['title'] = aFile
       listItem['url']   = aFile
+      listItem['caption'] = dirYaml['caption'] if dirYaml.has_key?('caption')
       fileList.push(listItem);
-      updateIndexPages(aFile) if File.directory?(aFile);
     end
     indexYaml, indexContents = loadJekyllPage('index.md') if File.exists?('index.md')
     indexYaml = Hash.new unless indexYaml.is_a?(Hash)
@@ -90,6 +93,7 @@ def updateIndexPages(aDir)
     indexYaml['fileList']  = fileList
     saveJekyllPage('index.md', indexYaml, indexContents)
   end
+  indexYaml
 end
 
 def gatherPapersInfo(projectName)
@@ -138,9 +142,15 @@ def gatherIvyReleaseInfo(projectName)
         next if aFile =~ /^\.+$/
         next if aFile =~ /^index.md$/i
         puts "    found release: [#{aFile}]"
+        releaseDetailsPage = aFile+'/index.md'
+        releaseDetails = Hash.new
+        releaseDetails, releaseContent = loadJekyllPage(releaseDetailsPage) if
+          File.exists?(releaseDetailsPage)
         releaseInfo = Hash.new
         releaseInfo['title'] = File.basename(aFile)
         releaseInfo['url']   = "/ivyRepo/#{$ivyGroup}/#{projectName}/#{aFile}"
+        releaseInfo['caption'] = releaseDetails['caption'] if
+          releaseDetails.has_key?('caption')
         releases.push(releaseInfo)
       end
     end
@@ -220,6 +230,7 @@ $ivyRepo   = "#{Dir.pwd}/ivyRepo/#{$ivyGroup}"
 $ctanRepo  = "#{Dir.pwd}/ctanRepo"
 $latexRepo = "#{Dir.pwd}/latexRepo"
 
+updateRepoIndexPages('ivyRepo')
+
 updateIndexPage('index.md')
 
-updateIndexPages('ivyRepo')

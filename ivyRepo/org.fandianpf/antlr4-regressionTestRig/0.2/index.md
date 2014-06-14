@@ -1,4 +1,8 @@
 ---
+caption: |
+  This version collects a greatly expanded range of metrics about the parse
+  of each example document. It is also able to work with example documents 
+  in hierarchies of subdirectories.
 layout: indexPage
 fileList:
 - title: antlr4-regressionTestRig-0.2-htmlDocs.tgz

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="org.fandianpf" module="antlr4-gradle-regressionTestPlugin" revision="0.3" status="integration" publication="20140614160740">
+    <description>Antlr4 plugin for Gradle</description>
+  </info>
+  <configurations>
+    <conf name="default" visibility="public" extends="runtime"/>
+    <conf name="runtime" visibility="public"/>
+  </configurations>
+  <publications>
+    <artifact name="antlr4-gradle-regressionTestPlugin" type="jar" ext="jar" conf="runtime"/>
+    <artifact name="antlr4-gradle-regressionTestPlugin" type="md" ext="md" m:classifier="releaseNotes" xmlns:m="http://ant.apache.org/ivy/maven"/>
+  </publications>
+  <dependencies>
+    <dependency org="org.antlr" name="antlr4" rev="4.2.2" conf="runtime-&gt;default"/>
+  </dependencies>
+</ivy-module>

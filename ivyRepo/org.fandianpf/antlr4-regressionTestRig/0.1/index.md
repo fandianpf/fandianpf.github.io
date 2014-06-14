@@ -1,4 +1,7 @@
 ---
+caption: |
+  initial release; unfortunately does not deal with example documents in 
+  subdirectories.
 layout: indexPage
 fileList:
 - title: antlr4-regressionTestRig-0.1-htmlDocs.tgz
