@@ -1,6 +1,6 @@
 ---
 caption: |
-  This version collects improves the parse tree output. It also provides a
+  This version improves the parse tree output. It also provides a
   fully functional trace which is now captured into the result files.
 layout: indexPage
 fileList:
