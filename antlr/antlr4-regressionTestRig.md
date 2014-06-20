@@ -17,6 +17,11 @@ ivyReleases:
     This version collects a greatly expanded range of metrics about the parse
     of each example document. It is also able to work with example documents 
     in hierarchies of subdirectories.
+- title: 0.3
+  url: /ivyRepo/org.fandianpf/antlr4-regressionTestRig/0.3
+  caption: |
+    This version collects improves the parse tree output. It also provides a
+    fully functional trace which is now captured into the result files.
 ---
 
 # antlr4-regressionTestRig [(GitHub)](https://github.com/fandianpf/antlr4-regressionTestRig)

@@ -16,5 +16,10 @@ fileList:
   url: 0.3
   caption: |
     updates the internal dependency on antlr-regressionTestRig to v0.2
+- title: 0.4
+  url: 0.4
+  caption: |
+    updates the internal dependency on antlr-regressionTestRig to v0.3 and
+    provides improved parse tree recursive indenting.
 ---
 

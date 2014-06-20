@@ -21,6 +21,11 @@ ivyReleases:
   url: /ivyRepo/org.fandianpf/antlr4-gradle-regressionTestPlugin/0.3
   caption: |
     updates the internal dependency on antlr-regressionTestRig to v0.2
+- title: 0.4
+  url: /ivyRepo/org.fandianpf/antlr4-gradle-regressionTestPlugin/0.4
+  caption: |
+    updates the internal dependency on antlr-regressionTestRig to v0.3 and
+    provides improved parse tree recursive indenting.
 ---
 
 # antlr4-gradle-regressionTestPlugin [(GitHub)](https://github.com/fandianpf/antlr4-gradle-regressionTestPlugin)
